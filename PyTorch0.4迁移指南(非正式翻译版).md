@@ -140,7 +140,8 @@ model=MyModule().to(device)#同样，网络模型转换到指定设备中
 ##例程demo
 对比了0.31和0.4的代码
 
-*0.31(old)
+* 0.31(old)
+
 ```python
 model=MyRNN()
 if use_cuda:
@@ -158,6 +159,7 @@ for input,target in test_loader:
                 ...
         ...
 ```
+
 * 0.40(new)
 
 ```python
