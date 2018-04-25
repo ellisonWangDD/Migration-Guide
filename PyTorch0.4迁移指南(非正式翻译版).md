@@ -120,16 +120,28 @@ True
 ```
 
 **torch.tensor(data,...)**<br/>
-`torch.tensor()`就像`numpy.array()`构造器，本版本中这个函数也可以构造标量。如果初始化没有指定`dtype`，将自动分配合适类型
+`torch.tensor()`就像`numpy.array()`构造器，可以将list转换为tensor，本版本中这个函数也可以构造标量。如果初始化没有指定`dtype`，将自动分配合适类型
+```python
+>>>cuda=torch.device('cuda')
+>>>torch.tensor([[1],[2],[3]],dtype=torch.half,device=cuda)
+tensor([[1],
+       [2],
+       [3]],device='cuda:0')
+>>>torch.tensor(1)
+tensor(1)
+>>>torch.tensor([1,2,3]).dtype
+torch.float32
+>>>torch.tensor([1,2]).dtype
+torch.int64
+```
 
 
-
-##模型数据迁移
+## 模型数据迁移
 在之前的版本中，当不确定计算设备(cpu or which GPU?)情况时不太好写代码。
 0.4版本做出了如下更新
 
 *  使用`to`方法可以轻松转换训练的网络和数据到不同设备之间
-*  `device`属性用来指定使用的计算设备
+*  `device`属性用来指定使用的计算设备，之前要用`cpu()`,`cuda()`转换模型或数据
 示例demo：
 ```python
 device=torch.device('cuda:0' if torch.cuda.is_available else 'cpu')
@@ -137,7 +149,7 @@ input=data.to(device)#直接指定数据到哪个设备中
 model=MyModule().to(device)#同样，网络模型转换到指定设备中
 ```
 
-##例程demo
+## 例程demo
 对比了0.31和0.4的代码
 
 * 0.31(old)
