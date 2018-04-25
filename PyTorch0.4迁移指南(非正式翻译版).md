@@ -118,7 +118,11 @@ False
 >>>x.requires_grad
 True
 ```
-torch.tensor(data,...)
+
+**torch.tensor(data,...)**<br/>
+`torch.tensor()`就像`numpy.array()`构造器，本版本中这个函数也可以构造标量。如果初始化没有指定`dtype`，将自动分配合适类型
+
+
 
 ##模型数据迁移
 在之前的版本中，当不确定计算设备(cpu or which GPU?)情况时不太好写代码。
@@ -133,8 +137,42 @@ input=data.to(device)#直接指定数据到哪个设备中
 model=MyModule().to(device)#同样，网络模型转换到指定设备中
 ```
 
+##例程demo
+对比了0.31和0.4的代码
 
+*0.31(old)
+```python
+model=MyRNN()
+if use_cuda:
+        model=model.cuda()
+total_loss=0
+for input,target in train_loader:
+        input,target=Variable(input),Variable(target)
+        hidden=Variable(torch.zeros(*h_shape))#隐藏层
+        if use_cuda:
+                input,target,hidden=input.cuda(),target.cuda(),hidden.cuda()
+        total_loss+=loss.data[0]
+for input,target in test_loader:
+        input=Variable(input,volatile=True)
+        if use_cuda:
+                ...
+        ...
+```
+* 0.40(new)
 
+```python
+device=torch.device('cuda' if use_cuda else 'cpu')
+model=MyRNN().to(device)
+total_loss=0
+for input,target in train_loader:
+        input,target=input.to(device),target.to(device)
+        hidden=input.new_zeros(*h_shape)
+        ...
+        total_loss+=loss.item()#得到1维张量
+with torch.no_grad():#不计算梯度
+        for input,target in test_loader:
+                ...
+```
 
 
 
