@@ -96,13 +96,13 @@ True
 >>>y.requires_grad
 False
 ```
-##`dtypes`,`devices`变更
+## `dtypes`,`devices`变更
 在0.40版本中，使用`torch.dtype`,`torch.device`和`torch.layout`类来分配管理数据设备类型
-###`torch.dtype`
+### `torch.dtype`
 以下是可用的数据类型表和它相应的tensor类型
-###`torch.device`
+### `torch.device`
 `torch.device`包含两种设备类型，cpu和cuda。对于GPU还可以选择设备编号，例如torch.device('{设备类型}：{设备编号}')，如果不确定设备编号，默认使用`torch.device('cuda')`就会默认调用当前的显卡。可以使用`torch.cuda.current_device()`查看当前显卡
-###`torch.layout`
+### `torch.layout`
 `torch.layout`代表tensor数据配置
 ### 创建Tensor
 在新版本中创建Tensor需要考虑dtype,device,layout和requires_grad，例如
@@ -118,6 +118,27 @@ False
 >>>x.requires_grad
 True
 ```
+下面介绍其他一些创建Tensor的方法
+
+* `torch.*_like`接受Tensor数据(注意不是数据的尺寸),如果不设置相关参数，它默认返回一个具有相同属性的Tensor
+```python
+>>>x=torch.randn(3,dtype=torch.float64)
+>>>torch.zeros_like(x)
+tensor([0.,0.,0.],dtype=torch.float64)
+>>>torch.zeros_like(x,dtype=torch.int)
+tensor([0,0,0],dtype=torch.int32)
+```
+* `tensor.new_*`使用尺寸作为参数创建具有相同属性的Tensor
+```python
+>>>x=torch.randn(3,dtype=torch.float64)
+>>>x.new_ones(2)
+tensor([1.,1.],dtype=torch.float64)
+>>>x.new_ones(4,dtype=torch.int)
+tensor([1,1,1,1],dtype=torch.int32)
+```
+
+
+如果需要指定创建Tensor的尺寸，可以直接用元组指定尺寸，例如`torch.zeros((2,3))`或`torch.zeros(2,3)`,代表Tensor尺寸为2x3<br/>
 
 **torch.tensor(data,...)**<br/>
 `torch.tensor()`就像`numpy.array()`构造器，可以将list转换为tensor，本版本中这个函数也可以构造标量。如果初始化没有指定`dtype`，将自动分配合适类型
@@ -134,7 +155,7 @@ torch.float32
 >>>torch.tensor([1,2]).dtype
 torch.int64
 ```
-
+`torch.from_numpy()`只能接受Numpy的`ndarray`作为参数输入
 
 ## 模型数据迁移
 在之前的版本中，当不确定计算设备(cpu or which GPU?)情况时不太好写代码。
